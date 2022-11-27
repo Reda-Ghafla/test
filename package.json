@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "name": "test",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon workingExam.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
