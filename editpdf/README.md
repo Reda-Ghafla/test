@@ -8,17 +8,29 @@ device: there is no backend, and nothing is uploaded.
 Built with React, Vite, TypeScript, Tailwind CSS, [pdf.js](https://github.com/mozilla/pdf.js)
 (rendering) and [pdf-lib](https://pdf-lib.js.org/) (writing the edited PDF).
 
-## Status
+## Features
 
-| # | Feature | Status |
-|---|---------|--------|
-| 1 | Landing page with drag-and-drop upload (PDF only, max 50 MB) | ✅ |
-| 2 | Editor: render all pages, zoom, thumbnail sidebar | ✅ |
-| 3 | Toolbar tools (text, white-out, highlight, draw, shapes, image, signature, date, check) | ⏳ next |
-| 4 | Page tools (rotate, delete, reorder, blank page, merge) | ⏳ |
-| 5 | Undo / redo, clear page | ⏳ |
-| 6 | Download edited PDF | ⏳ |
-| 7 | Fill AcroForm fields | ⏳ |
+- **Open:** drag and drop a PDF (up to 50 MB). Nothing is uploaded.
+- **View:** all pages render sharply, with zoom (buttons, `Ctrl +/-/0`, `Ctrl` + wheel) and a page thumbnail panel.
+- **Add and edit:** every object can be moved, resized and deleted.
+  - Text: Sans, Serif or Mono, with size, colour and bold. Double-click (or tap a selected text box) to edit it.
+  - White-out boxes to cover existing text, then type new text on top.
+  - Highlight, freehand pen (colour and thickness), rectangle, line and arrow.
+  - PNG/JPG images.
+  - Signature: draw it with mouse or finger, or type your name in one of three script fonts.
+  - Date stamp and checkmark.
+- **Page tools:** rotate, delete, drag thumbnails to reorder, insert a blank page, merge another PDF.
+- **Undo/redo** (`Ctrl+Z`, `Ctrl+Y` / `Ctrl+Shift+Z`) and **Clear page**.
+- **Forms:** fill in existing text fields, checkboxes, radio buttons and dropdowns.
+- **Download PDF:** everything is written into the original file as `<name>-edited.pdf`. Form fields stay fillable.
+- **Mobile:** touch drawing and signing, plus a bottom toolbar on phones.
+
+### Known limitations
+
+- Added text uses the standard PDF fonts (Helvetica, Times, Courier), which only cover Latin characters.
+  Other characters (for example Arabic or emoji) are replaced with `?` in the downloaded file.
+- Password-protected PDFs can't be opened.
+- Form fields in a *merged* PDF are flattened (their values are drawn onto the page).
 
 ## Run locally
 
@@ -40,36 +52,59 @@ npm run preview    # serve the production build at http://localhost:4173
 npm run typecheck  # type-check only
 ```
 
-### Editor shortcuts
+### Shortcuts
 
-- `Ctrl/Cmd +` and `Ctrl/Cmd -` zoom in and out. `Ctrl/Cmd 0` fits the page to the window width.
-- `Ctrl/Cmd` + mouse wheel (or a trackpad pinch) zooms.
-- Click the zoom percentage to fit the page to the window width.
-- Click a thumbnail to jump to that page.
+| Keys | Action |
+|------|--------|
+| `Ctrl/Cmd Z` | Undo |
+| `Ctrl/Cmd Y` or `Ctrl/Cmd Shift Z` | Redo |
+| `Delete` / `Backspace` | Delete the selected object |
+| `Esc` | Deselect and go back to the Select tool |
+| `Ctrl/Cmd +` / `-` / `0` | Zoom in / out / fit width |
+| `Ctrl/Cmd` + wheel | Zoom |
+| `Ctrl/Cmd Enter` or `Esc` | Finish editing a text box |
 
 ## Project structure
 
 ```
 src/
-  App.tsx                 opens the file, holds the document, warns before a refresh
+  App.tsx                   opens the file, warns before a refresh loses work
   components/
-    Landing.tsx           landing page
-    UploadZone.tsx        drag-and-drop / file picker with validation
-    Editor.tsx            editor layout, zoom, current-page tracking
-    Toolbar.tsx           top bar (zoom controls; editing tools come next)
-    PageCanvas.tsx        renders one page, only once it scrolls near the view
-    Thumbnails.tsx        page thumbnail sidebar
-    Logo.tsx              EditPDF wordmark
+    Landing.tsx, UploadZone.tsx   landing page and drag-and-drop upload
+    Editor.tsx              editor state: undo history, tools, page operations, download
+    TopBar.tsx              file name, zoom, Download PDF
+    Toolbar.tsx             editing tools, undo/redo, clear page
+    PropertiesBar.tsx       font, size, colour and thickness for the current tool or selection
+    PageCanvas.tsx          one page: pdf.js canvas, form layer and object layer
+    ObjectLayer.tsx         creates objects from clicks and drags on a page
+    ObjectView.tsx          one object: select, move, resize, edit text, delete
+    ObjectContent.tsx       draws an object (kept identical to the PDF output)
+    FormLayer.tsx           HTML inputs over the PDF's AcroForm fields
+    Thumbnails.tsx          page panel: thumbnails, reorder, rotate, delete, blank page, merge
+    SignatureModal.tsx      draw or type a signature
   lib/
-    pdfjs.ts              pdf.js setup (bundled worker) and loader
-    types.ts              editor document model (sources + page references)
-    useRenderPage.ts      hook that renders a page to a high-DPI canvas
-    useInView.ts          IntersectionObserver hook for lazy rendering
+    exportPdf.ts            writes the edited PDF with pdf-lib
+    geometry.ts             matrices for rotation and coordinate conversion
+    objects.ts              object types, text measuring, shared drawing helpers
+    history.ts              undo/redo
+    sources.ts              loading PDFs, blank pages
+    types.ts, pdfjs.ts, useRenderPage.ts, useInView.ts
 ```
 
-Pages are stored as references (`sourceId` + `sourceIndex` + `rotation`) into the
-loaded PDFs. Reordering, deleting and merging can then work without touching the
-original bytes, which pdf-lib reads at export time.
+### How coordinates work
+
+Objects are stored in **display space**: PDF points at zoom 1, measured from the top-left
+of the page as it is shown, including rotation. The screen only multiplies by the zoom
+level. On export, `objectMatrix()` in `exportPdf.ts` builds one transform per object:
+
+1. the object's local frame (y up)
+2. its own rotation (objects turn with their page when you rotate it)
+3. its position on the displayed page
+4. undo the page rotation (the file's `/Rotate` plus any rotation you added)
+5. flip into PDF user space (y up), offset by the crop box origin
+
+pdf-lib then draws the object inside that transform. The result lines up exactly with
+what you saw, on rotated pages and pages with an offset crop box too.
 
 ## Deploy
 

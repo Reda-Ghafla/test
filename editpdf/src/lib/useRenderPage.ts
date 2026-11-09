@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { AnnotationMode } from 'pdfjs-dist';
 import type { PDFDocumentProxy, PDFPageProxy } from './pdfjs';
 
 /**
@@ -12,6 +13,8 @@ export function useRenderPage(
   scale: number,
   rotation: number,
   enabled = true,
+  /** Leave form-field widgets out, because the editor draws live inputs on top. */
+  hideFormFields = false,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [page, setPage] = useState<PDFPageProxy | null>(null);
@@ -40,7 +43,11 @@ export function useRenderPage(
     const vp = page.getViewport({ scale: scale * dpr, rotation: (page.rotate + rotation) % 360 });
     canvas.width = Math.floor(vp.width);
     canvas.height = Math.floor(vp.height);
-    const task = page.render({ canvas, viewport: vp });
+    const task = page.render({
+      canvas,
+      viewport: vp,
+      annotationMode: hideFormFields ? AnnotationMode.ENABLE_FORMS : AnnotationMode.ENABLE,
+    });
     task.promise.then(
       () => setRendered(true),
       (err: unknown) => {
@@ -48,7 +55,7 @@ export function useRenderPage(
       },
     );
     return () => task.cancel();
-  }, [page, scale, rotation, enabled]);
+  }, [page, scale, rotation, enabled, hideFormFields]);
 
   return { canvasRef, width, height, ready: !!page, rendered };
 }

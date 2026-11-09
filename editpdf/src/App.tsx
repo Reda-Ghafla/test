@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Landing } from './components/Landing';
 import { Editor } from './components/Editor';
-import { loadPdf } from './lib/pdfjs';
-import { uid } from './lib/id';
-import type { EditorDoc, SourceDoc } from './lib/types';
+import { loadSourceFromFile } from './lib/sources';
+import type { PageRef, SourceDoc } from './lib/types';
+
+interface OpenDoc {
+  key: number;
+  fileName: string;
+  source: SourceDoc;
+  pages: PageRef[];
+}
 
 export default function App() {
-  const [doc, setDoc] = useState<EditorDoc | null>(null);
+  const [doc, setDoc] = useState<OpenDoc | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,25 +20,14 @@ export default function App() {
     setBusy(true);
     setError(null);
     try {
-      const bytes = new Uint8Array(await file.arrayBuffer());
-      const pdf = await loadPdf(bytes);
-      const source: SourceDoc = { id: uid('src'), name: file.name, bytes, pdf };
-      setDoc({
-        fileName: file.name,
-        sources: { [source.id]: source },
-        pages: Array.from({ length: pdf.numPages }, (_, i) => ({
-          id: uid('page'),
-          sourceId: source.id,
-          sourceIndex: i,
-          rotation: 0,
-        })),
-      });
+      const { source, pages } = await loadSourceFromFile(file);
+      setDoc({ key: Date.now(), fileName: file.name, source, pages });
     } catch (err) {
       console.error(err);
       const name = (err as { name?: string })?.name;
       setError(
         name === 'PasswordException'
-          ? 'This PDF is password-protected and can’t be opened yet.'
+          ? 'This PDF is password-protected and can’t be opened.'
           : 'Sorry, we couldn’t read that PDF. It may be damaged.',
       );
     } finally {
@@ -52,10 +47,13 @@ export default function App() {
   }, [doc]);
 
   const close = useCallback(() => {
-    if (!window.confirm('Close this document? Any unsaved changes will be lost.')) return;
-    Object.values(doc?.sources ?? {}).forEach((s) => void s.pdf.loadingTask.destroy());
+    if (!window.confirm('Close this document? Any changes you haven’t downloaded will be lost.')) return;
     setDoc(null);
-  }, [doc]);
+  }, []);
 
-  return doc ? <Editor doc={doc} onClose={close} /> : <Landing onFile={openFile} busy={busy} error={error} />;
+  return doc ? (
+    <Editor key={doc.key} fileName={doc.fileName} initialSource={doc.source} initialPages={doc.pages} onClose={close} />
+  ) : (
+    <Landing onFile={openFile} busy={busy} error={error} />
+  );
 }

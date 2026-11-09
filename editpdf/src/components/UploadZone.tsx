@@ -1,18 +1,10 @@
 import { useCallback, useRef, useState } from 'react';
-
-export const MAX_FILE_BYTES = 50 * 1024 * 1024;
+import { validatePdfFile as validate } from '../lib/sources';
 
 interface Props {
   onFile: (file: File) => void;
   busy?: boolean;
   error?: string | null;
-}
-
-function validate(file: File): string | null {
-  const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-  if (!isPdf) return 'That file isn’t a PDF. Please choose a .pdf file.';
-  if (file.size > MAX_FILE_BYTES) return 'That file is larger than 50 MB.';
-  return null;
 }
 
 export function UploadZone({ onFile, busy, error }: Props) {
