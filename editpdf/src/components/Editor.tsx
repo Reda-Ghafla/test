@@ -10,6 +10,9 @@ import { TopBar, ZOOM_MAX, ZOOM_MIN } from './TopBar';
 import { Toolbar } from './Toolbar';
 import { PropertiesBar } from './PropertiesBar';
 import { SignatureModal, type Signature } from './SignatureModal';
+import { FindReplaceModal } from './FindReplaceModal';
+import { runToTextObj } from '../lib/replaceText';
+import type { TextRun } from '../lib/textRuns';
 
 const ZOOM_STEPS = [0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4];
 const PAGE_GAP = 16;
@@ -77,6 +80,7 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
   const [selected, setSelected] = useState<{ pageId: string; id: string } | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [signing, setSigning] = useState(false);
+  const [finding, setFinding] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [toast, setToast] = useState<{ text: string; error?: boolean } | null>(null);
   const scrollRatio = useRef<number | null>(null);
@@ -225,6 +229,7 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
           size: patch.size ?? o.size,
           color: patch.textColor ?? o.color,
           bold: patch.bold ?? o.bold,
+          italic: patch.italic ?? o.italic,
         });
       } else if (o.type === 'highlight') {
         if (patch.highlightColor) next = { ...o, color: patch.highlightColor };
@@ -236,6 +241,36 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
       if (next !== o) onChange(selected.pageId, next);
     },
     [selected, selectedObj, onChange],
+  );
+
+  const onPatchSelected = useCallback(
+    (patch: { bg?: string; color?: string }) => {
+      if (!selected || !selectedObj) return;
+      onChange(selected.pageId, { ...selectedObj, ...patch } as EditObj);
+    },
+    [selected, selectedObj, onChange],
+  );
+
+  /** Edit text tool: replace a line of existing text with an editable box over it. */
+  const onEditRun = useCallback(
+    (pageId: string, run: TextRun) => onCreate(pageId, runToTextObj(run), { edit: true, keepTool: true }),
+    [onCreate],
+  );
+
+  const applyReplacements = useCallback(
+    (changes: { pageId: string; add: EditObj[]; update: EditObj[] }[]) => {
+      commit((s) => {
+        const objects = { ...s.objects };
+        for (const c of changes) {
+          const byId = new Map(c.update.map((o) => [o.id, o]));
+          objects[c.pageId] = [...(objects[c.pageId] ?? []).map((o) => byId.get(o.id) ?? o), ...c.add];
+        }
+        return { ...s, objects };
+      });
+      const n = changes.reduce((k, c) => k + c.add.length + c.update.length, 0);
+      notify(`Replaced text in ${n} place${n === 1 ? '' : 's'}.`);
+    },
+    [commit, notify],
   );
 
   /** Drop an object in the middle of the visible part of the current page. */
@@ -384,7 +419,7 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
         e.preventDefault();
         fitWidth();
       }
-      if (isTyping(e.target) || signing) return;
+      if (isTyping(e.target) || signing || finding) return;
       const key = e.key.toLowerCase();
       if (mod && key === 'z' && !e.shiftKey) {
         e.preventDefault();
@@ -404,7 +439,7 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [zoom, applyZoom, fitWidth, undo, redo, selected, onDelete, signing]);
+  }, [zoom, applyZoom, fitWidth, undo, redo, selected, onDelete, signing, finding]);
 
   const objectCount = (state.objects[current?.id] ?? []).length;
 
@@ -433,8 +468,9 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
         onRedo={() => (redo(), setSelected(null))}
         onClearPage={clearPage}
         canClear={objectCount > 0}
+        onFindReplace={() => setFinding(true)}
       />
-      <PropertiesBar tool={tool} options={options} selected={selectedObj} onOptions={onOptions} />
+      <PropertiesBar tool={tool} options={options} selected={selectedObj} onOptions={onOptions} onPatchSelected={onPatchSelected} />
 
       <div className="relative flex min-h-0 flex-1">
         {thumbsOpen && (
@@ -474,6 +510,7 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
                 editingId={editingId}
                 formValues={state.form}
                 onFormChange={onFormChange}
+                onEditRun={onEditRun}
                 onCreate={onCreate}
                 onChange={onChange}
                 onDelete={onDelete}
@@ -508,6 +545,19 @@ export function Editor({ fileName, initialSource, initialPages, onClose }: Props
         }}
       />
 
+      {finding && (
+        <FindReplaceModal
+          pages={pages}
+          sources={sources}
+          objects={state.objects}
+          onClose={() => setFinding(false)}
+          onApply={applyReplacements}
+          onGoToPage={(i) => {
+            setFinding(false);
+            goToPage(i);
+          }}
+        />
+      )}
       {signing && <SignatureModal onClose={() => setSigning(false)} onDone={insertSignature} />}
 
       {toast && (

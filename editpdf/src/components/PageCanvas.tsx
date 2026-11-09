@@ -5,6 +5,8 @@ import { useRenderPage } from '../lib/useRenderPage';
 import { useInView } from '../lib/useInView';
 import { ObjectLayer, type ObjectLayerProps } from './ObjectLayer';
 import { FormLayer } from './FormLayer';
+import { TextEditLayer } from './TextEditLayer';
+import type { TextRun } from '../lib/textRuns';
 
 type Handlers = Pick<ObjectLayerProps, 'onCreate' | 'onChange' | 'onDelete' | 'onSelect' | 'onEdit'>;
 
@@ -20,6 +22,7 @@ interface Props extends Handlers {
   editingId: string | null;
   formValues: Record<string, FormValue>;
   onFormChange: (key: string, value: FormValue) => void;
+  onEditRun: (pageId: string, run: TextRun) => void;
 }
 
 /**
@@ -72,6 +75,9 @@ export const PageCanvas = memo(function PageCanvas(props: Props) {
             interactive={props.tool === 'select'}
             onChange={props.onFormChange}
           />
+          {props.tool === 'edittext' && (
+            <TextEditLayer pdf={source.pdf} page={page} zoom={zoom} objects={props.objects} onPick={props.onEditRun} />
+          )}
         </ObjectLayer>
       )}
     </div>

@@ -72,6 +72,7 @@ export function ObjectLayer(props: ObjectLayerProps) {
         size: options.size,
         color: options.textColor,
         bold: options.bold,
+        italic: options.italic,
         x,
         y: y - options.size * 0.6,
         w: 0,
@@ -112,7 +113,7 @@ export function ObjectLayer(props: ObjectLayerProps) {
         className="absolute inset-0"
         style={{
           touchAction: tool === 'select' ? 'pan-x pan-y pinch-zoom' : 'none',
-          cursor: tool === 'select' ? 'default' : tool === 'text' ? 'text' : 'crosshair',
+          cursor: tool === 'select' || tool === 'edittext' ? 'default' : tool === 'text' ? 'text' : 'crosshair',
         }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -127,7 +128,8 @@ export function ObjectLayer(props: ObjectLayerProps) {
           zoom={zoom}
           selected={o.id === selectedId}
           editing={o.id === editingId}
-          interactive={tool === 'select'}
+          interactive={tool === 'select' || (tool === 'edittext' && o.type === 'text')}
+          editOnClick={tool === 'edittext'}
           onSelect={(id) => props.onSelect(pageId, id)}
           onChange={(obj) => props.onChange(pageId, obj)}
           onDelete={(id) => props.onDelete(pageId, id)}

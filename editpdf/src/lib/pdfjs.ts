@@ -9,7 +9,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
  * always hand it a copy and keep the original bytes intact for pdf-lib export.
  */
 export async function loadPdf(bytes: Uint8Array): Promise<PDFDocumentProxy> {
-  const task = pdfjsLib.getDocument({ data: bytes.slice() });
+  // fontExtraProperties exposes font names (e.g. "Arial-BoldMT"), used to detect bold/italic text.
+  const task = pdfjsLib.getDocument({ data: bytes.slice(), fontExtraProperties: true });
   return task.promise;
 }
 

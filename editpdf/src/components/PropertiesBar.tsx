@@ -3,10 +3,12 @@ import type { EditObj, FontFamily, Tool, ToolOptions } from '../lib/objects';
 const COLORS = ['#111827', '#1d4ed8', '#dc2626', '#15803d', '#7c3aed', '#ea580c'];
 const HIGHLIGHTS = ['#fde047', '#86efac', '#93c5fd', '#f9a8d4', '#fdba74'];
 
-type Kind = 'text' | 'stroke' | 'highlight' | 'whiteout' | 'none';
+type Kind = 'text' | 'stroke' | 'highlight' | 'whiteout' | 'edittext' | 'none';
 
 const kindOfTool = (t: Tool): Kind =>
-  t === 'text' || t === 'date'
+  t === 'edittext'
+    ? 'edittext'
+    : t === 'text' || t === 'date'
     ? 'text'
     : t === 'draw' || t === 'rect' || t === 'line' || t === 'arrow' || t === 'check'
       ? 'stroke'
@@ -24,6 +26,7 @@ interface Props {
   options: ToolOptions;
   selected: EditObj | null;
   onOptions: (patch: Partial<ToolOptions>) => void;
+  onPatchSelected: (patch: { bg?: string; color?: string }) => void;
 }
 
 function Swatches({ colors, value, onPick, label }: { colors: string[]; value: string; onPick: (c: string) => void; label: string }) {
@@ -50,12 +53,12 @@ function Swatches({ colors, value, onPick, label }: { colors: string[]; value: s
  * Settings for the current tool. When an object is selected, the controls
  * show (and change) that object's properties instead.
  */
-export function PropertiesBar({ tool, options, selected, onOptions }: Props) {
+export function PropertiesBar({ tool, options, selected, onOptions, onPatchSelected }: Props) {
   const kind = selected ? kindOfObj(selected) : kindOfTool(tool);
   if (kind === 'none') return null;
 
   const o: ToolOptions = { ...options };
-  if (selected?.type === 'text') Object.assign(o, { font: selected.font, size: selected.size, textColor: selected.color, bold: selected.bold });
+  if (selected?.type === 'text') Object.assign(o, { font: selected.font, size: selected.size, textColor: selected.color, bold: selected.bold, italic: !!selected.italic });
   else if (selected && 'stroke' in selected) Object.assign(o, { strokeColor: selected.color, strokeWidth: selected.stroke });
   else if (selected?.type === 'check') o.strokeColor = selected.color;
   if (selected?.type === 'highlight') o.highlightColor = selected.color;
@@ -97,7 +100,22 @@ export function PropertiesBar({ tool, options, selected, onOptions }: Props) {
           >
             B
           </button>
+          <button
+            type="button"
+            aria-pressed={o.italic}
+            onClick={() => onOptions({ italic: !o.italic })}
+            className={`h-8 w-8 shrink-0 rounded-lg border font-serif italic ${o.italic ? 'border-brand-700 bg-brand-800 text-white' : 'border-stone-300 bg-white text-stone-700'}`}
+            title="Italic"
+          >
+            I
+          </button>
           <Swatches colors={COLORS} value={o.textColor} onPick={(c) => onOptions({ textColor: c })} label="Text colour" />
+          {selected?.type === 'text' && selected.bg && (
+            <label className="flex shrink-0 items-center gap-2 text-stone-600" title="Colour of the box that hides the original text">
+              Cover
+              <Swatches colors={['#ffffff']} value={selected.bg} onPick={(c) => onPatchSelected({ bg: c })} label="Cover colour" />
+            </label>
+          )}
         </>
       )}
       {kind === 'stroke' && (
@@ -123,8 +141,19 @@ export function PropertiesBar({ tool, options, selected, onOptions }: Props) {
       {kind === 'highlight' && (
         <Swatches colors={HIGHLIGHTS} value={o.highlightColor} onPick={(c) => onOptions({ highlightColor: c })} label="Highlight colour" />
       )}
-      {kind === 'whiteout' && (
-        <p className="text-stone-600">Drag over text to cover it, then use <strong>Text</strong> to type on top.</p>
+      {kind === 'whiteout' &&
+        (selected?.type === 'whiteout' ? (
+          <label className="flex items-center gap-2 text-stone-600">
+            Colour
+            <Swatches colors={['#ffffff', '#f5f5f4', '#e7e5e4']} value={selected.color || '#ffffff'} onPick={(c) => onPatchSelected({ color: c })} label="Cover colour" />
+          </label>
+        ) : (
+          <p className="text-stone-600">Drag over text to cover it, then use <strong>Add text</strong> to type on top.</p>
+        ))}
+      {kind === 'edittext' && (
+        <p className="text-stone-600">
+          Click any text on the page to change it. Leave it empty to delete it. Press <strong>Esc</strong> when done.
+        </p>
       )}
       {!selected && (tool === 'draw' || tool === 'rect' || tool === 'line' || tool === 'arrow' || tool === 'highlight') && (
         <p className="hidden text-stone-500 lg:block">Drag on the page.</p>

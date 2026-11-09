@@ -12,6 +12,10 @@ Built with React, Vite, TypeScript, Tailwind CSS, [pdf.js](https://github.com/mo
 
 - **Open:** drag and drop a PDF (up to 50 MB). Nothing is uploaded.
 - **View:** all pages render sharply, with zoom (buttons, `Ctrl +/-/0`, `Ctrl` + wheel) and a page thumbnail panel.
+- **Edit existing text:** choose **Edit text** and click any words in the PDF. An editable box opens over them with
+  the same size, colour, boldness/italics and background, and the original is hidden. Clear the box to delete the words.
+  Replacement text is stretched to match the width of the original font.
+- **Find & replace:** search every page (match case / whole words) and replace all matches in one step.
 - **Add and edit:** every object can be moved, resized and deleted.
   - Text: Sans, Serif or Mono, with size, colour and bold. Double-click (or tap a selected text box) to edit it.
   - White-out boxes to cover existing text, then type new text on top.
@@ -29,6 +33,9 @@ Built with React, Vite, TypeScript, Tailwind CSS, [pdf.js](https://github.com/mo
 
 - Added text uses the standard PDF fonts (Helvetica, Times, Courier), which only cover Latin characters.
   Other characters (for example Arabic or emoji) are replaced with `?` in the downloaded file.
+- Edited text is drawn in the closest standard font (sans, serif or mono), not the PDF's own embedded font, so it can look
+  slightly different from the text around it. Scanned pages (pictures of text) have no editable text: use White-out + Add text.
+- Only horizontal text can be edited in place.
 - Password-protected PDFs can't be opened.
 - Form fields in a *merged* PDF are flattened (their values are drawn onto the page).
 
@@ -80,6 +87,8 @@ src/
     ObjectView.tsx          one object: select, move, resize, edit text, delete
     ObjectContent.tsx       draws an object (kept identical to the PDF output)
     FormLayer.tsx           HTML inputs over the PDF's AcroForm fields
+    TextEditLayer.tsx       "Edit text" mode: clickable boxes over existing text
+    FindReplaceModal.tsx    find and replace across the document
     Thumbnails.tsx          page panel: thumbnails, reorder, rotate, delete, blank page, merge
     SignatureModal.tsx      draw or type a signature
   lib/
@@ -88,6 +97,8 @@ src/
     objects.ts              object types, text measuring, shared drawing helpers
     history.ts              undo/redo
     sources.ts              loading PDFs, blank pages
+    textRuns.ts             reads existing text lines with pdf.js, detects font/size/colour/background
+    replaceText.ts          turns a text line into an editable replacement box
     types.ts, pdfjs.ts, useRenderPage.ts, useInView.ts
 ```
 

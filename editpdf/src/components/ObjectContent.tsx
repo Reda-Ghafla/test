@@ -16,21 +16,26 @@ export function ObjectContent({ o, cw, ch, zoom }: { o: EditObj; cw: number; ch:
   switch (o.type) {
     case 'text':
       return (
-        <div
-          className="pointer-events-none select-none whitespace-pre"
-          style={{
-            fontFamily: FONT_CSS[o.font],
-            fontSize: o.size * zoom,
-            lineHeight: LINE_HEIGHT,
-            fontWeight: o.bold ? 700 : 400,
-            color: o.color,
-          }}
-        >
-          {o.text || ' '}
+        <div className="pointer-events-none select-none overflow-visible" style={{ width: W, height: H, background: o.bg }}>
+          <div
+            className="whitespace-pre"
+            style={{
+              transform: o.sx && o.sx !== 1 ? `scaleX(${o.sx})` : undefined,
+              transformOrigin: 'left top',
+              fontStyle: o.italic ? 'italic' : undefined,
+              fontFamily: FONT_CSS[o.font],
+              fontSize: o.size * zoom,
+              lineHeight: LINE_HEIGHT,
+              fontWeight: o.bold ? 700 : 400,
+              color: o.color,
+            }}
+          >
+            {o.text || ' '}
+          </div>
         </div>
       );
     case 'whiteout':
-      return <div className="h-full w-full bg-white" />;
+      return <div className="h-full w-full" style={{ background: o.color || '#ffffff' }} />;
     case 'highlight':
       return <div className="h-full w-full mix-blend-multiply" style={{ background: o.color, opacity: 0.4 }} />;
     case 'rect':

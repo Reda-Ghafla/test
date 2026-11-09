@@ -25,6 +25,13 @@ export interface TextObj extends Base {
   size: number;
   color: string;
   bold: boolean;
+  italic?: boolean;
+  /** Fill behind the text. Set when the text replaces existing PDF text, to cover the original. */
+  bg?: string;
+  /** The box is never narrower than this (the width of the original text it covers). */
+  minW?: number;
+  /** Horizontal text scale, so replacement text matches the width of the original font. */
+  sx?: number;
 }
 export interface BoxObj extends Base {
   type: 'whiteout' | 'highlight' | 'rect';
@@ -64,6 +71,7 @@ export type ObjType = EditObj['type'];
 
 export type Tool =
   | 'select'
+  | 'edittext'
   | 'text'
   | 'whiteout'
   | 'highlight'
@@ -81,6 +89,7 @@ export interface ToolOptions {
   size: number;
   textColor: string;
   bold: boolean;
+  italic: boolean;
   strokeColor: string;
   strokeWidth: number;
   highlightColor: string;
@@ -91,6 +100,7 @@ export const DEFAULT_OPTIONS: ToolOptions = {
   size: 14,
   textColor: '#111827',
   bold: false,
+  italic: false,
   strokeColor: '#1d4ed8',
   strokeWidth: 2,
   highlightColor: '#fde047',
@@ -119,12 +129,15 @@ export const LINE_HEIGHT = 1.2;
 let measureCtx: CanvasRenderingContext2D | null = null;
 
 /** Measure a (multi-line) text block in points, the same way it is laid out on screen. */
-export function measureText(text: string, font: FontFamily, size: number, bold: boolean) {
+export const cssFont = (font: FontFamily, size: number, bold: boolean, italic = false) =>
+  `${italic ? 'italic ' : ''}${bold ? 'bold ' : ''}${size}px ${FONT_CSS[font]}`;
+
+export function measureText(text: string, font: FontFamily, size: number, bold: boolean, italic = false) {
   measureCtx ??= document.createElement('canvas').getContext('2d');
   const lines = text.split('\n');
   let w = 0;
   if (measureCtx) {
-    measureCtx.font = `${bold ? 'bold ' : ''}${size}px ${FONT_CSS[font]}`;
+    measureCtx.font = cssFont(font, size, bold, italic);
     for (const line of lines) w = Math.max(w, measureCtx.measureText(line).width);
   }
   return { w: Math.max(Math.ceil(w) + 2, size * 0.6), h: lines.length * size * LINE_HEIGHT };
@@ -132,7 +145,9 @@ export function measureText(text: string, font: FontFamily, size: number, bold: 
 
 /** Recompute a text object's box after its text or font changed (keeps the top-left corner). */
 export function fitText(o: TextObj): TextObj {
-  const { w, h } = measureText(o.text || ' ', o.font, o.size, o.bold);
+  const m = measureText(o.text || ' ', o.font, o.size, o.bold, o.italic);
+  const w = Math.max((m.w - 2) * (o.sx ?? 1) + 2, o.minW ?? 0);
+  const h = m.h;
   return o.rot % 180 === 0 ? { ...o, w, h } : { ...o, w: h, h: w };
 }
 

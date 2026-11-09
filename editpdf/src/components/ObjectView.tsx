@@ -28,6 +28,8 @@ interface Props {
   selected: boolean;
   editing: boolean;
   interactive: boolean;
+  /** Start editing text on a single click (Edit text tool). */
+  editOnClick?: boolean;
   onSelect: (id: string) => void;
   onChange: (obj: EditObj) => void;
   onDelete: (id: string) => void;
@@ -40,6 +42,7 @@ export const ObjectView = memo(function ObjectView({
   selected,
   editing,
   interactive,
+  editOnClick,
   onSelect,
   onChange,
   onDelete,
@@ -89,7 +92,7 @@ export const ObjectView = memo(function ObjectView({
     gesture.current = null;
     if (!g) return;
     if (g.moved && draft) onChange(resized(obj, draft));
-    else if (!g.moved && g.wasSelected && obj.type === 'text' && g.kind === 'move') onEdit(obj.id);
+    else if (!g.moved && (g.wasSelected || editOnClick) && obj.type === 'text' && g.kind === 'move') onEdit(obj.id);
     setDraft(null);
   };
 
@@ -121,7 +124,7 @@ export const ObjectView = memo(function ObjectView({
         style={{ width: cw * zoom, height: ch * zoom, transform: `translate(-50%, -50%) rotate(${shown.rot}deg)` }}
       >
         {editing && obj.type === 'text' ? (
-          <TextEditor obj={obj} zoom={zoom} onDone={(o) => (o.text.trim() ? onChange(o) : onDelete(o.id), onEdit(null))} />
+          <TextEditor obj={obj} zoom={zoom} onDone={(o) => (o.text.trim() || o.bg ? onChange(o) : onDelete(o.id), onEdit(null))} />
         ) : (
           <ObjectContent o={shown} cw={cw} ch={ch} zoom={zoom} />
         )}
@@ -160,8 +163,9 @@ export const ObjectView = memo(function ObjectView({
 /** Apply a new box to an object. Text scales its font size; everything else stretches. */
 function resized(o: EditObj, b: Box): EditObj {
   if (o.type === 'text' && (b.w !== o.w || b.h !== o.h)) {
-    const size = Math.max(4, Math.round(o.size * (b.h / o.h) * 10) / 10);
-    const fitted = fitText({ ...o, size });
+    const k = b.h / o.h;
+    const size = Math.max(4, Math.round(o.size * k * 10) / 10);
+    const fitted = fitText({ ...o, size, minW: o.minW ? o.minW * k : undefined });
     // Keep the corner opposite to the dragged one in place.
     return {
       ...fitted,
@@ -187,13 +191,17 @@ function TextEditor({ obj, zoom, onDone }: { obj: TextObj; zoom: number; onDone:
     const t = window.setTimeout(focus, 0);
     return () => window.clearTimeout(t);
   }, []);
-  const { w, h } = measureText(text || ' ', obj.font, obj.size, obj.bold);
+  const m = measureText(text || ' ', obj.font, obj.size, obj.bold, obj.italic);
+  const sx = obj.sx ?? 1;
+  const w = Math.max((m.w + obj.size) * sx, obj.minW ?? 0);
+  const h = m.h;
   const finish = () => {
     if (done.current) return;
     done.current = true;
     onDone(fitText({ ...obj, text: text.replace(/\s+$/, '') }));
   };
   return (
+    <div style={{ width: w * zoom, height: h * zoom, background: obj.bg ?? 'rgb(240 253 244 / 0.6)' }} className="outline-2 outline-brand-500">
     <textarea
       ref={ref}
       value={text}
@@ -206,9 +214,12 @@ function TextEditor({ obj, zoom, onDone }: { obj: TextObj; zoom: number; onDone:
       }}
       spellCheck={false}
       wrap="off"
-      className="block resize-none overflow-hidden border-0 bg-brand-50/60 p-0 outline-2 outline-brand-500"
+      className="block resize-none overflow-hidden border-0 bg-transparent p-0 outline-none"
       style={{
-        width: (w + obj.size) * zoom,
+        transform: sx !== 1 ? `scaleX(${sx})` : undefined,
+        transformOrigin: 'left top',
+        fontStyle: obj.italic ? 'italic' : undefined,
+        width: (w / sx) * zoom,
         height: h * zoom,
         fontFamily: FONT_CSS[obj.font],
         fontSize: obj.size * zoom,
@@ -217,5 +228,6 @@ function TextEditor({ obj, zoom, onDone }: { obj: TextObj; zoom: number; onDone:
         color: obj.color,
       }}
     />
+    </div>
   );
 }

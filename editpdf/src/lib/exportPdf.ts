@@ -31,10 +31,11 @@ import {
 } from './objects';
 import { totalRotation, type EditState, type FormValue, type PageRef, type SourceDoc } from './types';
 
-const STANDARD: Record<FontFamily, [StandardFonts, StandardFonts]> = {
-  Helvetica: [StandardFonts.Helvetica, StandardFonts.HelveticaBold],
-  Times: [StandardFonts.TimesRoman, StandardFonts.TimesRomanBold],
-  Courier: [StandardFonts.Courier, StandardFonts.CourierBold],
+/** [regular, bold, italic, bold italic] */
+const STANDARD: Record<FontFamily, StandardFonts[]> = {
+  Helvetica: [StandardFonts.Helvetica, StandardFonts.HelveticaBold, StandardFonts.HelveticaOblique, StandardFonts.HelveticaBoldOblique],
+  Times: [StandardFonts.TimesRoman, StandardFonts.TimesRomanBold, StandardFonts.TimesRomanItalic, StandardFonts.TimesRomanBoldItalic],
+  Courier: [StandardFonts.Courier, StandardFonts.CourierBold, StandardFonts.CourierOblique, StandardFonts.CourierBoldOblique],
 };
 
 function hexToRgb(hex: string) {
@@ -75,9 +76,9 @@ class Resources {
   private images = new Map<string, Promise<PDFImage>>();
   constructor(private doc: PDFDocument) {}
 
-  font(family: FontFamily, bold: boolean) {
-    const key = `${family}-${bold}`;
-    if (!this.fonts.has(key)) this.fonts.set(key, this.doc.embedFont(STANDARD[family][bold ? 1 : 0]));
+  font(family: FontFamily, bold: boolean, italic = false) {
+    const key = `${family}-${bold}-${italic}`;
+    if (!this.fonts.has(key)) this.fonts.set(key, this.doc.embedFont(STANDARD[family][(bold ? 1 : 0) + (italic ? 2 : 0)]));
     return this.fonts.get(key)!;
   }
 
@@ -100,8 +101,10 @@ class Resources {
   }
 }
 
-async function drawText(page: PDFPage, o: TextObj, ch: number, res: Resources) {
-  const font = await res.font(o.font, o.bold);
+async function drawText(page: PDFPage, o: TextObj, cw: number, ch: number, res: Resources) {
+  if (o.bg) page.drawRectangle({ x: 0, y: 0, width: cw, height: ch, color: hexToRgb(o.bg) });
+  if (o.sx && o.sx !== 1) page.pushOperators(concatTransformationMatrix(o.sx, 0, 0, 1, 0, 0));
+  const font = await res.font(o.font, o.bold, o.italic);
   const { asc, desc } = FONT_METRICS[o.font];
   const lineH = o.size * LINE_HEIGHT;
   // Match the CSS line box: half-leading above, then the font's ascent.
@@ -122,9 +125,9 @@ async function drawObject(page: PDFPage, o: EditObj, res: Resources) {
   const { cw, ch } = contentSize(o);
   switch (o.type) {
     case 'text':
-      return drawText(page, o, ch, res);
+      return drawText(page, o, cw, ch, res);
     case 'whiteout':
-      return page.drawRectangle({ x: 0, y: 0, width: cw, height: ch, color: rgb(1, 1, 1) });
+      return page.drawRectangle({ x: 0, y: 0, width: cw, height: ch, color: hexToRgb(o.color || '#ffffff') });
     case 'highlight':
       return page.drawRectangle({
         x: 0,

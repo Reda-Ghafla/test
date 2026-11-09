@@ -3,7 +3,8 @@ import { Icon, type IconName } from './icons';
 
 const TOOLS: { tool: Tool; icon: IconName; label: string }[] = [
   { tool: 'select', icon: 'select', label: 'Select' },
-  { tool: 'text', icon: 'text', label: 'Text' },
+  { tool: 'edittext', icon: 'editText', label: 'Edit text' },
+  { tool: 'text', icon: 'text', label: 'Add text' },
   { tool: 'whiteout', icon: 'whiteout', label: 'White-out' },
   { tool: 'highlight', icon: 'highlight', label: 'Highlight' },
   { tool: 'draw', icon: 'draw', label: 'Draw' },
@@ -25,6 +26,7 @@ interface Props {
   onRedo: () => void;
   onClearPage: () => void;
   canClear: boolean;
+  onFindReplace: () => void;
 }
 
 function ToolButton({
@@ -60,12 +62,14 @@ function ToolButton({
 }
 
 /** Editing tools. Sits under the top bar on desktop and at the bottom of the screen on phones. */
-export function Toolbar({ tool, onTool, canUndo, canRedo, onUndo, onRedo, onClearPage, canClear }: Props) {
+export function Toolbar({ tool, onTool, canUndo, canRedo, onUndo, onRedo, onClearPage, canClear, onFindReplace }: Props) {
   return (
     <div className="z-20 flex shrink-0 items-center gap-1 overflow-x-auto border-stone-200 bg-white px-2 py-1.5 [scrollbar-width:none] max-md:order-last max-md:border-t md:border-b md:justify-center">
       {TOOLS.map((t) => (
         <ToolButton key={t.tool} icon={t.icon} label={t.label} active={tool === t.tool} onClick={() => onTool(t.tool)} />
       ))}
+      <span className="mx-1 h-8 w-px shrink-0 bg-stone-200" />
+      <ToolButton icon="search" label="Replace" title="Find and replace text in the whole document" onClick={onFindReplace} />
       <span className="mx-1 h-8 w-px shrink-0 bg-stone-200" />
       <ToolButton icon="undo" label="Undo" title="Undo (Ctrl+Z)" disabled={!canUndo} onClick={onUndo} />
       <ToolButton icon="redo" label="Redo" title="Redo (Ctrl+Y)" disabled={!canRedo} onClick={onRedo} />

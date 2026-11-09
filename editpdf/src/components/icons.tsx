@@ -9,6 +9,20 @@ const paths: Record<string, ReactNode> = {
       <path d="M9 20h6" />
     </>
   ),
+  editText: (
+    <>
+      <path d="M4 7V5h10v2" />
+      <path d="M9 5v13" />
+      <path d="M7 18h4" />
+      <path d="M17 9v10M15 9h4M15 19h4" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6" />
+      <path d="m20 20-4.5-4.5" />
+    </>
+  ),
   whiteout: (
     <>
       <rect x="3" y="7" width="18" height="10" rx="1.5" />

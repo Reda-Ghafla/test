@@ -8,6 +8,7 @@ interface Props {
 }
 
 const features = [
+  { title: 'Edit existing text', body: 'Click any words in your PDF to change them, or find and replace across every page.' },
   { title: 'Type & sign', body: 'Add text, draw or type a signature, stamp dates and checkmarks.' },
   { title: 'Mark up', body: 'Highlight, white-out, draw freehand, and add shapes or images.' },
   { title: 'Rearrange', body: 'Rotate, delete, reorder and merge pages in a few taps.' },
@@ -43,7 +44,7 @@ export function Landing({ onFile, busy, error }: Props) {
           </p>
         </div>
 
-        <ul className="mt-14 grid w-full gap-4 sm:grid-cols-3">
+        <ul className="mt-14 grid w-full gap-4 sm:grid-cols-2">
           {features.map((f) => (
             <li key={f.title} className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
               <h2 className="font-semibold text-brand-800">{f.title}</h2>
