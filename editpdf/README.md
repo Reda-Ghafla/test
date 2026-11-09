@@ -1,5 +1,7 @@
 # EditPDF
 
+**Live:** https://reda-ghafla.github.io/test/
+
 A private, browser-only PDF editor. Files are opened and edited entirely on your
 device: there is no backend, and nothing is uploaded.
 
