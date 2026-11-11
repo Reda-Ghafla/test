@@ -1,0 +1,225 @@
+{
+  "_instructions": "Add passages to the 'passages' list. Each needs a unique id, a title, the passage text (about 120-180 words), and exactly 3 statements. Each statement has 'text', 'answer' (one of: True, False, Cannot say) and 'why' (one sentence explaining the answer using only the passage). Run `pytest tests/test_verbal_bank.py` after editing to validate the file.",
+  "passages": [
+    {
+      "id": "hybrid-working",
+      "title": "Hybrid working at Halden Logistics",
+      "text": "Halden Logistics introduced a hybrid working policy in January after a staff survey found that 68% of office-based employees wanted to work from home at least two days a week. Under the policy, office staff must be on site on Tuesdays and Thursdays, while the remaining days are flexible. Warehouse and driving roles are excluded because they cannot be performed remotely. In the first six months, the company reduced its leased office space by a third, saving an estimated £420,000 a year. However, managers reported that onboarding new graduates had become harder, as junior staff had fewer chances to learn informally from colleagues. To address this, Halden now requires all employees in their first three months to work on site four days a week. The company plans to review the policy at the end of the year, when it will repeat the staff survey.",
+      "statements": [
+        {"text": "Warehouse staff at Halden can choose to work from home on flexible days.", "answer": "False", "why": "Warehouse and driving roles are excluded from the hybrid policy."},
+        {"text": "The hybrid policy has improved employee productivity at Halden.", "answer": "Cannot say", "why": "The passage mentions office savings and onboarding problems but says nothing about productivity."},
+        {"text": "New employees at Halden are required to be on site on more days per week than other office staff.", "answer": "True", "why": "New starters must be on site four days a week; other office staff must attend only on Tuesdays and Thursdays."}
+      ]
+    },
+    {
+      "id": "battery-recycling",
+      "title": "Battery recycling",
+      "text": "Lithium-ion battery recycling is expanding rapidly as the first generation of electric vehicles reaches the end of its useful life. Recovered materials such as lithium, cobalt and nickel can be sold back to battery manufacturers, reducing their dependence on newly mined supplies. Recycling plants, however, face two main obstacles. First, batteries arrive in many different shapes and chemistries, which makes automated dismantling difficult and keeps labour costs high. Second, the price recyclers receive for recovered metals rises and falls with commodity markets, so their revenues are unpredictable. Several governments have responded by setting minimum recycled-content targets for new batteries, which guarantee demand for recovered materials. Industry analysts expect the volume of batteries available for recycling to grow fastest after 2030, when vehicles sold during the recent boom in electric car sales begin to be scrapped.",
+      "statements": [
+        {"text": "Variation in battery design increases the labour costs of recycling plants.", "answer": "True", "why": "Different shapes and chemistries make automated dismantling difficult and keep labour costs high."},
+        {"text": "Recycled cobalt is cheaper for manufacturers to buy than newly mined cobalt.", "answer": "Cannot say", "why": "The passage does not compare the price of recycled and newly mined materials."},
+        {"text": "Recyclers' revenues are stable because government targets fix the price of recovered metals.", "answer": "False", "why": "Revenues are unpredictable because prices follow commodity markets; the targets guarantee demand, not price."}
+      ]
+    },
+    {
+      "id": "coffee-loyalty",
+      "title": "Brewline's loyalty app",
+      "text": "Brewline, a chain of 140 coffee shops, replaced its paper stamp cards with a mobile app last spring. Customers earn one point per pound spent and can redeem 50 points for a free drink. Within nine months, 1.2 million customers had downloaded the app, and app users visited 30% more often than non-users. The company cautions that this difference does not prove the app caused the increase, since its most frequent customers were also the most likely to sign up. The app has also given Brewline detailed data on purchasing habits, which it used to launch a range of afternoon snacks after noticing a drop in sales between 2pm and 4pm. Paper stamp cards will no longer be accepted after the end of this year, although points from existing cards can be transferred to the app until then.",
+      "statements": [
+        {"text": "The loyalty app has caused Brewline customers to visit more often.", "answer": "Cannot say", "why": "App users visit more often, but the company says this does not prove the app caused it."},
+        {"text": "Brewline's afternoon snack range was launched in response to data collected through the app.", "answer": "True", "why": "App data showed a drop in sales between 2pm and 4pm, which led to the snack range."},
+        {"text": "Customers will still be able to use paper stamp cards next year.", "answer": "False", "why": "Paper stamp cards will not be accepted after the end of this year."}
+      ]
+    },
+    {
+      "id": "four-day-week",
+      "title": "Four-day week trial at Norrow Software",
+      "text": "Norrow Software ran a six-month trial in which its 85 employees worked four days a week for the same pay. Staff were expected to complete the same workload as before, and teams agreed among themselves which day each person would take off so that customer support was available five days a week. At the end of the trial, the number of customer support tickets resolved per week was unchanged, while sick days fell by 40% compared with the same period the previous year. Employee turnover also fell, although the company noted that the wider job market had slowed during the trial, making it harder to judge the cause. Following the trial, the board approved the four-day week permanently for all staff except the sales team, which will remain on a five-day week because client meetings are concentrated at the start and end of the week.",
+      "statements": [
+        {"text": "During the trial, Norrow's customer support was available five days a week.", "answer": "True", "why": "Teams staggered their days off so that customer support was available five days a week."},
+        {"text": "The four-day week was the reason employee turnover fell at Norrow.", "answer": "Cannot say", "why": "Turnover fell, but the company says the slower job market makes the cause hard to judge."},
+        {"text": "All Norrow employees now work a four-day week.", "answer": "False", "why": "The sales team remains on a five-day week."}
+      ]
+    },
+    {
+      "id": "shelf-labels",
+      "title": "Electronic shelf labels at Fenwick Stores",
+      "text": "Fenwick Stores, a regional supermarket group, has introduced electronic shelf labels in 60 of its 210 stores. The labels allow prices to be changed centrally within minutes rather than by staff replacing paper tags overnight. Fenwick says the main benefit is reducing waste: fresh products approaching their sell-by date can be discounted automatically during the day. Consumer groups have raised concerns that the technology could also be used for 'surge pricing', where prices rise at busy times. Fenwick has publicly committed not to raise prices during the day, and says any price increases will only take effect when stores open. The rollout to the remaining stores depends on the results of a waste audit due next March. Installing the labels costs around £90,000 per store.",
+      "statements": [
+        {"text": "Fenwick will decide whether to extend the labels to its other stores after a waste audit.", "answer": "True", "why": "The rollout to the remaining stores depends on the results of a waste audit due next March."},
+        {"text": "Electronic shelf labels have already reduced waste in Fenwick stores.", "answer": "Cannot say", "why": "Reducing waste is the intended benefit, but the audit results are not yet known."},
+        {"text": "Under Fenwick's commitment, the price of an item can be increased while a store is open.", "answer": "False", "why": "Fenwick committed not to raise prices during the day; increases only take effect when stores open."}
+      ]
+    },
+    {
+      "id": "graduate-entry",
+      "title": "Entry requirements at Calder & Finch",
+      "text": "Calder & Finch, an accountancy firm, removed the minimum degree classification from its graduate entry requirements three years ago. Previously, applicants needed at least an upper second-class degree. The firm now relies on online assessments and a video interview to shortlist candidates. Since the change, applications have doubled and the proportion of hires from state schools has risen from 52% to 64%. Partners were initially concerned that the change would lower professional exam pass rates, but first-time pass rates for the most recent intake were 89%, compared with 87% before the change. The firm acknowledges that it is too early to assess longer-term career outcomes. Other firms in the sector have made similar changes, although some have since reintroduced minimum requirements to manage the volume of applications.",
+      "statements": [
+        {"text": "Calder & Finch now considers applicants who have a lower second-class degree.", "answer": "True", "why": "The minimum degree classification has been removed, so a lower second no longer rules an applicant out."},
+        {"text": "First-time exam pass rates at Calder & Finch fell after the entry requirements changed.", "answer": "False", "why": "Pass rates rose from 87% to 89%."},
+        {"text": "Graduates hired under the new requirements are promoted faster than those hired before.", "answer": "Cannot say", "why": "The firm says it is too early to assess longer-term career outcomes."}
+      ]
+    },
+    {
+      "id": "cloud-migration",
+      "title": "Tarrant Insurance moves to the cloud",
+      "text": "Tarrant Insurance is moving its policy administration systems from its own data centre to a public cloud provider. The project is planned in three phases over two years, beginning with non-customer-facing systems such as internal reporting. Customer data will only be moved in the final phase, after the company's security team has completed a review of the provider's encryption standards. Tarrant expects running costs to rise during the migration, because both the data centre and the cloud services must be paid for at the same time. Once the data centre closes, the company forecasts annual savings of £3 million. A previous attempt to migrate in 2019 was abandoned after the cost of rewriting older software proved higher than expected; this time, Tarrant intends to replace rather than rewrite most of those older systems.",
+      "statements": [
+        {"text": "Customer data will be moved to the cloud in the first phase of the project.", "answer": "False", "why": "Customer data will only be moved in the final phase."},
+        {"text": "Tarrant expects its running costs to be higher during the migration.", "answer": "True", "why": "Both the data centre and the cloud services must be paid for at the same time."},
+        {"text": "The security team has already completed its review of the provider's encryption standards.", "answer": "Cannot say", "why": "The passage says data moves after the review is completed, but not whether it has been completed yet."}
+      ]
+    },
+    {
+      "id": "water-leakage",
+      "title": "Leakage at Severn Vale Water",
+      "text": "Severn Vale Water loses around 22% of the water it treats through leaks in its pipe network, slightly above the national average of 20%. The regulator has set the company a target of reducing leakage by 15% within five years, and failure to meet it will result in a financial penalty. Severn Vale plans to install acoustic sensors that detect the sound of escaping water, allowing leaks to be found before they reach the surface. The sensors will initially be fitted in urban areas, where pipes are older and leaks affect more customers. Replacing pipes is far more effective in the long term, but at current spending levels it would take the company over 100 years to renew its entire network. Customer bills are expected to rise by 4% next year, partly to fund the programme.",
+      "statements": [
+        {"text": "Severn Vale's leakage rate is higher than the national average.", "answer": "True", "why": "Severn Vale loses 22% compared with a national average of 20%."},
+        {"text": "The acoustic sensors will be installed in rural areas before urban areas.", "answer": "False", "why": "Sensors will initially be fitted in urban areas."},
+        {"text": "Severn Vale will meet the regulator's leakage target.", "answer": "Cannot say", "why": "The passage describes the plan and the penalty, not whether the target will be met."}
+      ]
+    },
+    {
+      "id": "aviation-fuel",
+      "title": "Corvair and sustainable aviation fuel",
+      "text": "Corvair, a short-haul airline, has signed an agreement to buy sustainable aviation fuel (SAF) made from used cooking oil. SAF can be blended with conventional jet fuel and used in existing aircraft without modification. Corvair's agreement covers 5% of its fuel needs from next year, rising to 10% by the end of the decade. SAF currently costs between two and three times as much as conventional fuel, and Corvair has said that some of this cost will be passed on to passengers through a small surcharge on each ticket. The supply of used cooking oil is limited, and analysts warn that competition between airlines for SAF is likely to intensify as government blending mandates take effect. Corvair has not ruled out investing directly in a production plant to secure future supply.",
+      "statements": [
+        {"text": "Corvair will need to modify its aircraft before it can use SAF.", "answer": "False", "why": "SAF can be used in existing aircraft without modification."},
+        {"text": "By the end of the decade, Corvair's agreement will cover a tenth of its fuel needs.", "answer": "True", "why": "The agreement rises to 10% of fuel needs by the end of the decade."},
+        {"text": "Corvair will invest in its own SAF production plant.", "answer": "Cannot say", "why": "Corvair has only said it has not ruled this out."}
+      ]
+    },
+    {
+      "id": "office-rents",
+      "title": "City-centre office rents",
+      "text": "Office rents in the city centre fell by 8% last year, while rents for offices on the outskirts were broadly unchanged. Agents attribute the fall to an oversupply of space after three large developments were completed at the same time. Demand has also changed: companies are increasingly seeking smaller, higher-quality offices with good transport links and energy-efficient buildings. Older buildings that do not meet new minimum energy-efficiency standards, which take effect in two years, cannot be let to new tenants once the standards apply unless they are upgraded. Some landlords are converting such buildings into flats, although conversion is only financially viable where residential prices are high. Agents expect city-centre rents to recover once the current oversupply has been absorbed, but they have not given a timescale.",
+      "statements": [
+        {"text": "Rents for offices on the outskirts fell by 8% last year.", "answer": "False", "why": "The 8% fall applied to the city centre; outskirts rents were broadly unchanged."},
+        {"text": "Once the new standards apply, an older building that fails them can be let to a new tenant if it is upgraded first.", "answer": "True", "why": "Such buildings cannot be let to new tenants unless they are upgraded."},
+        {"text": "City-centre rents will recover within two years.", "answer": "Cannot say", "why": "Agents expect a recovery but have not given a timescale."}
+      ]
+    },
+    {
+      "id": "patent-expiry",
+      "title": "Arlen Pharmaceuticals faces a patent expiry",
+      "text": "Arlen Pharmaceuticals earns 35% of its revenue from a single cholesterol drug, Lipravel, whose patent expires in 18 months. Once the patent expires, other manufacturers will be able to sell cheaper generic versions, and Arlen expects Lipravel sales to fall by around 70% within two years. To offset the loss, Arlen has three drugs in late-stage clinical trials, two of which are expected to receive regulatory decisions before the patent expires. The company has also acquired a smaller biotech firm specialising in rare diseases, where treatments typically face less competition. Arlen's chief executive has said that the company does not plan to cut its research budget, which is currently 18% of revenue, despite the expected fall in income.",
+      "statements": [
+        {"text": "Arlen currently earns more than a third of its revenue from Lipravel.", "answer": "True", "why": "Lipravel accounts for 35% of revenue, which is more than a third."},
+        {"text": "All three of Arlen's late-stage drugs are expected to receive regulatory decisions before Lipravel's patent expires.", "answer": "False", "why": "Only two of the three are expected to receive decisions before the patent expires."},
+        {"text": "The rare-disease treatments from Arlen's acquisition will face no competition.", "answer": "Cannot say", "why": "The passage says such treatments typically face less competition, not none."}
+      ]
+    },
+    {
+      "id": "branch-closures",
+      "title": "Meridian Bank closes branches",
+      "text": "Meridian Bank will close 45 of its 300 branches over the next year, citing a 60% fall in counter transactions over the past five years as more customers bank online. Before closing any branch, the bank will assess whether nearby alternatives are available, such as another branch within five miles or a post office offering basic banking services. Where no alternative exists, Meridian will provide a mobile banking van that visits at least once a week. The bank says that no staff will be made compulsorily redundant, as affected employees will be offered roles in other branches or in its expanding telephone banking team. Consumer groups have criticised the closures, arguing that older customers and small businesses that handle cash are most affected.",
+      "statements": [
+        {"text": "Meridian plans to close fewer than a fifth of its branches.", "answer": "True", "why": "45 of 300 branches is 15%, which is less than a fifth."},
+        {"text": "Some Meridian staff will be made compulsorily redundant because of the closures.", "answer": "False", "why": "The bank says no staff will be made compulsorily redundant."},
+        {"text": "Most of Meridian's customers now bank online.", "answer": "Cannot say", "why": "A 60% fall in counter transactions does not tell us what share of customers bank online."}
+      ]
+    },
+    {
+      "id": "electric-vans",
+      "title": "Parcelwise's electric fleet",
+      "text": "Parcelwise, a parcel delivery company, aims to replace all 2,400 of its diesel vans with electric models by 2030. So far, 600 electric vans are in service, mainly in cities, where daily routes are short enough to be completed on a single charge. Rural routes are more challenging because they can exceed the range of current models, particularly in winter when battery performance drops. Electric vans cost more to buy than diesel equivalents, but Parcelwise estimates that lower fuel and maintenance costs make them cheaper overall after about five years. The main constraint on the rollout is depot charging capacity: upgrading the electricity connection at a large depot can take up to two years because it depends on the local network operator.",
+      "statements": [
+        {"text": "A quarter of the 2,400-van fleet Parcelwise plans to electrify is now electric.", "answer": "True", "why": "600 of the 2,400 vans is a quarter."},
+        {"text": "Electric vans are cheaper to buy than diesel vans.", "answer": "False", "why": "Electric vans cost more to buy; they only become cheaper overall after about five years."},
+        {"text": "Parcelwise will have replaced all its diesel vans by 2030.", "answer": "Cannot say", "why": "2030 is the aim, and the passage describes constraints; it does not say whether the aim will be met."}
+      ]
+    },
+    {
+      "id": "self-checkout",
+      "title": "Ashby Retail rethinks self-checkouts",
+      "text": "Following a rise in shoplifting, Ashby Retail has removed self-checkout machines from 20 of its smaller stores and reopened staffed tills. The company says theft losses at self-checkouts were around four times higher than at staffed tills. In larger stores, where self-checkouts are heavily used at busy times, the machines will remain but will be limited to baskets of 15 items or fewer. Ashby has also hired additional staff to assist customers at the machines, which it believes will reduce both theft and accidental errors, such as items not scanning correctly. Customer surveys show that younger shoppers generally prefer self-checkouts, while older shoppers prefer staffed tills, although the company has not published the figures.",
+      "statements": [
+        {"text": "Ashby has removed self-checkout machines from all of its stores.", "answer": "False", "why": "Machines remain in larger stores; they were removed from 20 smaller stores."},
+        {"text": "In Ashby's larger stores, a customer with 20 items cannot use a self-checkout.", "answer": "True", "why": "Self-checkouts in larger stores are limited to baskets of 15 items or fewer."},
+        {"text": "The additional staff have reduced theft at Ashby's self-checkouts.", "answer": "Cannot say", "why": "Ashby only says it believes the extra staff will reduce theft."}
+      ]
+    },
+    {
+      "id": "chip-plant",
+      "title": "Velto's European chip plant",
+      "text": "Velto Semiconductors has announced plans to build a chip fabrication plant in northern Portugal, its first outside Asia. The plant will cost €6 billion, of which €1.5 billion will come from government subsidies, and is expected to employ 1,800 people when fully operational in 2029. Velto chose the site partly because of the availability of renewable electricity and water, both of which chip manufacturing uses in large quantities. However, the company has warned that recruiting enough qualified engineers will be difficult, and it plans to partner with local universities to create specialised degree programmes. The plant will produce chips for the automotive and industrial sectors rather than the most advanced chips used in smartphones, which will continue to be made in Asia.",
+      "statements": [
+        {"text": "Government subsidies will cover a quarter of the plant's cost.", "answer": "True", "why": "€1.5 billion of the €6 billion cost is a quarter."},
+        {"text": "The Portuguese plant will make the most advanced chips used in smartphones.", "answer": "False", "why": "Those chips will continue to be made in Asia; the plant serves automotive and industrial customers."},
+        {"text": "Partnering with universities will solve Velto's shortage of engineers.", "answer": "Cannot say", "why": "The passage describes the plan, not its outcome."}
+      ]
+    },
+    {
+      "id": "streaming",
+      "title": "StreamNorth loses subscribers",
+      "text": "StreamNorth, a video streaming service, lost 400,000 subscribers in the first quarter, its first quarterly decline since launching in 2015. The company blamed rising household costs and increased competition, as several rivals launched cheaper advertising-supported plans. In response, StreamNorth will introduce its own lower-priced plan with adverts in the autumn, priced at £5.99 a month compared with £10.99 for its standard plan. It will also begin charging an extra fee to subscribers who share their accounts with people outside their household. Analysts estimate that around a fifth of current viewers use a shared account. Despite the subscriber loss, StreamNorth's revenue rose 6% in the quarter because of price increases introduced in January.",
+      "statements": [
+        {"text": "StreamNorth's revenue fell in the first quarter.", "answer": "False", "why": "Revenue rose 6% in the quarter."},
+        {"text": "The advertising plan will cost less than 60% of the price of the standard plan.", "answer": "True", "why": "£5.99 is about 54.5% of £10.99."},
+        {"text": "The account-sharing fee will win back the subscribers StreamNorth lost.", "answer": "Cannot say", "why": "The passage gives no information about the effect of the fee."}
+      ]
+    },
+    {
+      "id": "crop-drones",
+      "title": "Drones on the farm",
+      "text": "Farmers in the region have started using drones to spray crops in fields that are too steep or wet for tractors. A drone can treat around ten hectares an hour and, because it applies chemicals only where they are needed, can reduce pesticide use by up to 30% compared with tractor spraying. Current rules require drone operators to hold a specialist licence and to notify neighbouring properties 48 hours before spraying. Drone spraying is not permitted within 50 metres of a watercourse. Equipment suppliers report that most buyers so far are agricultural contractors who offer spraying as a service, rather than individual farmers, because the drones and training are expensive for a single farm to justify.",
+      "statements": [
+        {"text": "Drones may be used to spray crops right next to a river.", "answer": "False", "why": "Drone spraying is not permitted within 50 metres of a watercourse."},
+        {"text": "Neighbouring properties must be told about drone spraying two days in advance.", "answer": "True", "why": "Operators must notify neighbouring properties 48 hours before spraying."},
+        {"text": "Spraying by drone costs less per hectare than spraying by tractor.", "answer": "Cannot say", "why": "The passage compares pesticide use, not the cost per hectare."}
+      ]
+    },
+    {
+      "id": "telecoms-merger",
+      "title": "Lumen and Kestrel agree to merge",
+      "text": "Two mobile network operators, Lumen and Kestrel, have agreed to merge, creating the country's largest operator with around 27 million customers. The companies argue that combining their networks will allow faster rollout of 5G coverage and save £700 million a year in operating costs. The merger requires approval from the competition regulator, which has previously blocked a similar deal on the grounds that reducing the number of operators from four to three could lead to higher prices. To address these concerns, Lumen and Kestrel have offered to freeze prices for existing customers for three years and to sell some of their radio spectrum to a smaller rival. The regulator is expected to announce its decision within six months.",
+      "statements": [
+        {"text": "The competition regulator has approved the merger.", "answer": "False", "why": "The merger still requires approval; a decision is expected within six months."},
+        {"text": "This merger would reduce the number of mobile operators in the country from four to three.", "answer": "Cannot say", "why": "The four-to-three concern refers to a previous deal; the passage does not say how many operators there are now."},
+        {"text": "Lumen and Kestrel have offered to sell some of their spectrum to a smaller competitor.", "answer": "True", "why": "They offered to sell some of their radio spectrum to a smaller rival."}
+      ]
+    },
+    {
+      "id": "packaging-tax",
+      "title": "The plastic packaging tax",
+      "text": "A tax on plastic packaging containing less than 30% recycled material came into force last April at a rate of £200 per tonne. Manufacturers and importers producing less than ten tonnes of plastic packaging a year are exempt. The government estimates that the tax will increase the use of recycled plastic by 40%, equivalent to almost 200,000 tonnes of carbon savings a year. Some food manufacturers have argued that they cannot easily meet the threshold, because food-safety rules restrict which recycled materials can be in contact with food. The supply of food-grade recycled plastic is currently limited, and its price has risen by more than 50% since the tax was announced.",
+      "statements": [
+        {"text": "A manufacturer producing five tonnes of plastic packaging a year must pay the tax.", "answer": "False", "why": "Producers of less than ten tonnes a year are exempt."},
+        {"text": "A large manufacturer would pay the tax on packaging made with 25% recycled plastic.", "answer": "True", "why": "The tax applies to packaging with less than 30% recycled material, and large producers are not exempt."},
+        {"text": "The tax has increased the use of recycled plastic by 40%.", "answer": "Cannot say", "why": "40% is the government's estimate, not a reported result."}
+      ]
+    },
+    {
+      "id": "hotel-occupancy",
+      "title": "Coastal hotel occupancy",
+      "text": "Hotels in the coastal region reported average occupancy of 74% over the summer, up from 69% the previous year, but still below the 81% recorded before the pandemic. Average room rates rose by 9%, meaning revenue per available room increased faster than occupancy. Overseas visitors accounted for 28% of guests, a lower share than before the pandemic, while domestic visitors made up the rest. Hotel owners say that staff shortages forced some properties to keep rooms closed during the busiest weeks. The regional tourism board plans to promote off-season breaks, aiming to increase occupancy outside the summer months, when it typically falls below 50%.",
+      "statements": [
+        {"text": "Summer occupancy has returned to its pre-pandemic level.", "answer": "False", "why": "74% is still below the 81% recorded before the pandemic."},
+        {"text": "Domestic visitors made up the majority of hotel guests over the summer.", "answer": "True", "why": "Overseas visitors were 28%, so domestic visitors were the remaining 72%."},
+        {"text": "The off-season campaign will lift occupancy outside the summer above 50%.", "answer": "Cannot say", "why": "The passage states the board's aim, not the outcome."}
+      ]
+    },
+    {
+      "id": "carbon-reporting",
+      "title": "Carbon accounting software",
+      "text": "Demand for carbon accounting software has grown as large companies are increasingly required to report their greenhouse gas emissions. Most regulations currently cover only emissions from a company's own operations and the energy it buys. However, new rules taking effect in two years will also require the largest companies to report emissions from their supply chains, which typically account for the majority of a company's total footprint. Collecting this data is difficult because it depends on information from hundreds or thousands of suppliers, many of which are small businesses without their own measurement systems. Software providers are responding by developing tools that estimate supplier emissions from spending data, although critics argue that these estimates can be inaccurate.",
+      "statements": [
+        {"text": "Most current regulations require companies to report the emissions of their supply chains.", "answer": "False", "why": "Most regulations currently cover only a company's own operations and the energy it buys."},
+        {"text": "Supply-chain emissions typically make up most of a company's total footprint.", "answer": "True", "why": "The passage says they typically account for the majority of the total footprint."},
+        {"text": "Estimates based on spending data are less accurate than measurements supplied directly by suppliers.", "answer": "Cannot say", "why": "Critics say the estimates can be inaccurate, but no comparison with supplier measurements is made."}
+      ]
+    },
+    {
+      "id": "factory-robots",
+      "title": "Automation at Brennan Components",
+      "text": "Brennan Components, a manufacturer of car parts, installed 40 industrial robots at its main factory last year. Output per worker rose by 25% in the following twelve months, and the defect rate fell from 2.1% to 0.8%. No jobs were cut as a result of the automation; instead, 60 production workers were retrained as robot technicians, and the company hired 15 additional engineers. Brennan's managing director has said that without automation the factory would have struggled to compete with lower-cost producers overseas. The company now plans to install a further 25 robots at its second site, subject to securing a government grant that would cover around a fifth of the £4 million cost.",
+      "statements": [
+        {"text": "Brennan's defect rate more than halved after the robots were installed.", "answer": "True", "why": "It fell from 2.1% to 0.8%, which is less than half of 2.1%."},
+        {"text": "Brennan cut jobs as a result of automating its main factory.", "answer": "False", "why": "No jobs were cut; workers were retrained and 15 engineers were hired."},
+        {"text": "Brennan will install 25 robots at its second site.", "answer": "Cannot say", "why": "The plan depends on securing a government grant."}
+      ]
+    }
+  ]
+}

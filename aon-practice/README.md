@@ -3,12 +3,12 @@
 A Streamlit app for practising Aon (formerly cut-e) "scales" style online tests.
 Questions are generated procedurally from a random seed, so every attempt is new.
 
-| Section | Time | Status |
+| Section | Time | Format |
 |---|---|---|
-| Numerical reasoning | 12 min | ✅ ready |
-| Inductive reasoning | 8 min | 🚧 next |
-| Verbal reasoning (True / False / Cannot say) | 12 min | 🚧 planned |
-| Personality (Likert, unscored) | untimed | 🚧 planned |
+| Numerical reasoning | 12 min | Tabbed tables/charts, 5-option calculations |
+| Inductive reasoning | 8 min | Odd one out in a row of 9 figures (scales ix style) + 3×3 matrices |
+| Verbal reasoning | 12 min | Business passages, True / False / Cannot say |
+| Personality | untimed | Agree–disagree scale or paired statements (ADEPT-15 style), unscored |
 
 ## Run it
 
@@ -29,8 +29,16 @@ cd aon-practice
 pytest -q
 ```
 
-`tests/test_numerical.py` generates every numerical template across hundreds of
-seeds and checks that:
+What the tests check:
+
+- `test_inductive.py`: for every generated puzzle, a brute-force search over all
+  candidate rules (progressions and repeating patterns) confirms that exactly
+  one figure or option is defensible. In odd-one-out rows, random "distraction"
+  attributes are checked to be clearly random rather than almost-rules.
+- `test_verbal_bank.py`: validates `data/verbal_bank.json` (schema, 3 statements
+  per passage, length, balanced True / False / Cannot say).
+- `test_numerical.py`: generates every numerical template across hundreds of
+  seeds and checks that:
 
 - each question has 5 distinct options and exactly one is correct
 - the correct option matches the answer recomputed **independently** from the
@@ -54,6 +62,38 @@ seeds and checks that:
 - **Question types:** percentage change, share of total, average, ratio per
   head, currency conversion (both directions), cross rates, profit margin,
   percentage of a total, two-step % change, percent vs percentage points.
+
+## Inductive section
+
+Each figure has five attributes: **direction** (8 ways), **corner square**
+(4 corners), **dots** (1–4), **colour** (4) and **size** (3). Rules are
+progressions ("turns 90° clockwise each step", "moves one corner anticlockwise")
+or repeating patterns ("blue, yellow, then again"). Puzzles have 1 or 2 rules.
+Later puzzles are more likely to have 2. Some 1-rule puzzles add an attribute
+that changes at random, to train you to ignore noise.
+
+- **Odd one out** (about 75% of puzzles): 9 figures in a row, and one breaks a rule.
+- **Matrix**: 3×3 grid, one cell missing, 5 options. Each wrong option differs
+  from the answer in exactly one attribute.
+
+## Verbal section
+
+22 hand-written passages × 3 statements (22 True, 22 False, 22 Cannot say) in
+`data/verbal_bank.json`. To add your own, copy an entry, give it a new `id`,
+write 3 statements with `answer` set to `True`, `False` or `Cannot say`, add a
+one-line `why`, then run `pytest tests/test_verbal_bank.py`.
+
+Results break your mistakes down into: *went beyond the text* (said True/False
+when the answer was Cannot say), *too cautious* (said Cannot say when the
+passage did settle it), and *misread* (True ↔ False).
+
+## Personality section
+
+Unscored and not saved, for familiarity only. Choose an agree–disagree scale
+or paired statements, where you slide towards the statement more like you (the
+forced-choice style Aon's ADEPT-15 uses). Afterwards you see how you used the
+scale and whether you agreed with oppositely worded statements, which is the
+kind of inconsistency real questionnaires look for.
 
 ## Modes
 
@@ -81,9 +121,14 @@ aon-practice/
 ├── app.py                  # Streamlit UI: start, test runner, results, progress
 ├── generators/
 │   ├── common.py           # Question dataclass, option builder, number formatting
-│   └── numerical.py        # data cases + question templates + chart rendering
+│   ├── numerical.py        # data cases + question templates + chart rendering
+│   ├── inductive.py        # rule engine, uniqueness check, matplotlib figures
+│   ├── verbal.py           # loads data/verbal_bank.json
+│   └── personality.py      # Likert / paired statement bank
 ├── storage.py              # SQLite persistence + CSV export
 ├── charts.py               # progress / breakdown charts (matplotlib)
-├── data/                   # attempts.db is created here
+├── data/
+│   ├── verbal_bank.json    # extend with your own passages
+│   └── attempts.db         # created on first run
 └── tests/                  # pytest suite
 ```
